@@ -27,7 +27,10 @@ def main():
     SourceLinksFormatter.check_for_links_presence(doc, changes)
 
     doc.save("edited.docx")
-    print("changes = ",changes)
+    changes_file = open("changelog.txt", "w+")
+    for item in changes:
+        changes_file.write("%s\n" % item)
+    changes_file.close()
 
 
 if __name__ == '__main__':
