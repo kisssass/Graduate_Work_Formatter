@@ -21,11 +21,13 @@ def main():
         print('Документ должен быть типа docx')
         exit(1)
 
-    MainRequirementsFormatter.format_document(doc)
-    MainRequirementsFormatter.change_title_page_year(doc, '2023')
-    SourceLinksFormatter.check_for_links_presence(doc)
+    changes =[]
+    MainRequirementsFormatter.format_document(doc, changes)
+    MainRequirementsFormatter.change_title_page_year(doc, '2023', changes)
+    SourceLinksFormatter.check_for_links_presence(doc, changes)
 
     doc.save("edited.docx")
+    print("changes = ",changes)
 
 
 if __name__ == '__main__':

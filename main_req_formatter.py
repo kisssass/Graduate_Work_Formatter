@@ -38,53 +38,118 @@ class MainRequirementsFormatter:
 
     @staticmethod
     def change_font(font_name: str, paragraph):
+        count = 0
         for run in paragraph.runs:
-            run.font.name = font_name
+            if not run.font.name == font_name:
+                run.font.name = font_name
+                count += 1
+        if (count > 0):
+            return 1
+        else:
+            return 0
 
     @staticmethod
     def change_font_size(font_size: int, paragraph):
+        count = 0
         for run in paragraph.runs:
-            run.font.size = Pt(font_size)
+            if not run.font.size == Pt(font_size):
+                run.font.size = Pt(font_size)
+                count += 1
+        if (count > 0):
+            return 1
+        else:
+            return 0
 
 
     @staticmethod
     def change_font_color(color: RGBColor, paragraph):
+        count = 0
         for run in paragraph.runs:
-            run.font.color.rgb = color
+            if not (run.font.color.rgb == color or run.font.color.rgb == None):
+                run.font.color.rgb = color
+                count+=1
+        if (count>0):
+            return 1
+        else:
+            return 0
 
     @staticmethod
     def change_line_spacing(spacing: WD_LINE_SPACING, paragraph):
-        paragraph.paragraph_format.line_spacing_rule = spacing
+        if not paragraph.paragraph_format.line_spacing_rule == spacing :
+            paragraph.paragraph_format.line_spacing_rule = spacing
+            return 1
+        else:
+            return 0
 
     @staticmethod
     def change_margins(left_cm, right_cm, top_cm, bottom_cm, doc: Document):
+        count = 0
         for section in doc.sections:
-            section.left_margin = Cm(left_cm)
-            section.right_margin = Cm(right_cm)
-            section.top_margin = Cm(top_cm)
-            section.bottom_margin = Cm(bottom_cm)
+            if not (section.left_margin //1000 == Cm(left_cm)//1000 and
+                    section.right_margin//100000 == Cm(right_cm)//100000 and
+                    section.top_margin//100 == Cm(top_cm)//100 and
+                    section.bottom_margin//100 == Cm(bottom_cm)//100):
+                section.left_margin = Cm(left_cm)
+                section.right_margin = Cm(right_cm)
+                section.top_margin = Cm(top_cm)
+                section.bottom_margin = Cm(bottom_cm)
+                count += 1
+        if (count > 0):
+            return 1
+        else:
+            return 0
 
     @staticmethod
     def change_left_paragraph_indentation(indentation_cm, paragraph):
-        paragraph.paragraph_format.left_indent = Cm(indentation_cm)
+        if not (paragraph.paragraph_format.left_indent == None):
+            if not (round(paragraph.paragraph_format.left_indent.cm, 2) == indentation_cm):
+                paragraph.paragraph_format.left_indent = Cm(indentation_cm)
+                return 1
+        else:
+            return 0
+
 
     @staticmethod
-    def change_title_page_year(doc: Document, year: str):
+    def change_title_page_year(doc: Document, year: str, changes):
         regex = re.compile(r"20[0-9][0-9]")
 
         for p in doc.paragraphs:
             for r in p.runs:
                 if regex.search(r.text):
+                    changes.append("year changed")
                     r.text = f'\n{year}'
                     return
 
     @staticmethod
-    def format_document(doc: Document):
+    def external_changes(colour, indentation, font, size, spacing, margins, loc_changes):
+        if colour != 0:
+            loc_changes.append("color changed")
+        if indentation != 0:
+            loc_changes.append("indentation changed")
+        if font != 0:
+            loc_changes.append("font name changed")
+        if size != 0:
+            loc_changes.append("font size changed")
+        if spacing != 0:
+            loc_changes.append("line spacing changed")
+        if margins != 0:
+            loc_changes.append("margins changed")
+
+
+    @staticmethod
+    def format_document(doc: Document, loc_change):
+        count_color_changes = 0
+        count_font_name_changes = 0
+        count_font_size_changes = 0
+        count_line_spacing_changes = 0
+        count_left_paragraph_indentation = 0
+        count_margins_changes = 0
         for paragraph in doc.paragraphs:
-            MainRequirementsFormatter.change_font('Times New Roman', paragraph)
-            MainRequirementsFormatter.change_font_size(14, paragraph)
-            MainRequirementsFormatter.change_font_color(RGBColor(0, 0, 0), paragraph)
-            MainRequirementsFormatter.change_line_spacing(WD_LINE_SPACING.ONE_POINT_FIVE, paragraph)
-            MainRequirementsFormatter.change_left_paragraph_indentation(1.25, paragraph)
+            count_font_name_changes += MainRequirementsFormatter.change_font('Times New Roman', paragraph)
+            count_font_size_changes += MainRequirementsFormatter.change_font_size(14, paragraph)
+            count_color_changes += MainRequirementsFormatter.change_font_color(RGBColor(0, 0, 0), paragraph)
+            count_line_spacing_changes += MainRequirementsFormatter.change_line_spacing(WD_LINE_SPACING.ONE_POINT_FIVE, paragraph)
+            count_left_paragraph_indentation += MainRequirementsFormatter.change_left_paragraph_indentation(1.25, paragraph)
         MainRequirementsFormatter.number_pages(doc)
-        MainRequirementsFormatter.change_margins(3, 1.5, 2, 2, doc)
+        count_margins_changes += MainRequirementsFormatter.change_margins(3, 1.5, 2,2,doc)
+        MainRequirementsFormatter.external_changes(count_color_changes, count_left_paragraph_indentation,count_font_name_changes,count_font_size_changes,count_line_spacing_changes,count_margins_changes, loc_change)

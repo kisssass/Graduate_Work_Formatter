@@ -36,9 +36,8 @@ class SourceLinksFormatter:
         return counter
 
     @staticmethod
-    def check_for_links_presence(doc: Document):
+    def check_for_links_presence(doc: Document, changes):
         ref_subscripts_number = SourceLinksFormatter.get_number_of_ref_subscripts(doc)
         source_links_number = SourceLinksFormatter.get_number_of_source_links(doc, 'список источников и литературы')
         if ref_subscripts_number != source_links_number:
-            print('Количество выделенных ссылок не соответствует количеству источников литературы.'
-                  ' Возможно Ваш список источников не является цельным списком.')
+            changes.append("warning: the number of highlighted references does not correspond to the number of literature sources, perhaps your list of sources is not a complete list!")
