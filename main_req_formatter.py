@@ -44,9 +44,9 @@ class MainRequirementsFormatter:
                 run.font.name = font_name
                 count += 1
         if (count > 0):
-            return 1
+            return True
         else:
-            return 0
+            return False
 
     @staticmethod
     def change_font_size(font_size: int, paragraph):
@@ -56,9 +56,9 @@ class MainRequirementsFormatter:
                 run.font.size = Pt(font_size)
                 count += 1
         if (count > 0):
-            return 1
+            return True
         else:
-            return 0
+            return False
 
 
     @staticmethod
@@ -69,17 +69,17 @@ class MainRequirementsFormatter:
                 run.font.color.rgb = color
                 count+=1
         if (count>0):
-            return 1
+            return True
         else:
-            return 0
+            return False
 
     @staticmethod
     def change_line_spacing(spacing: WD_LINE_SPACING, paragraph):
         if not paragraph.paragraph_format.line_spacing_rule == spacing :
             paragraph.paragraph_format.line_spacing_rule = spacing
-            return 1
+            return True
         else:
-            return 0
+            return False
 
     @staticmethod
     def change_margins(left_cm, right_cm, top_cm, bottom_cm, doc: Document):
@@ -95,18 +95,18 @@ class MainRequirementsFormatter:
                 section.bottom_margin = Cm(bottom_cm)
                 count += 1
         if (count > 0):
-            return 1
+            return True
         else:
-            return 0
+            return False
 
     @staticmethod
     def change_left_paragraph_indentation(indentation_cm, paragraph):
         if not (paragraph.paragraph_format.left_indent == None):
             if not (round(paragraph.paragraph_format.left_indent.cm, 2) == indentation_cm):
                 paragraph.paragraph_format.left_indent = Cm(indentation_cm)
-                return 1
+                return True
         else:
-            return 0
+            return False
 
 
     @staticmethod
@@ -122,34 +122,34 @@ class MainRequirementsFormatter:
 
     @staticmethod
     def external_changes(colour, indentation, font, size, spacing, margins, loc_changes):
-        if colour != 0:
+        if colour:
             loc_changes.append("color changed")
-        if indentation != 0:
+        if indentation:
             loc_changes.append("indentation changed")
-        if font != 0:
+        if font:
             loc_changes.append("font name changed")
-        if size != 0:
+        if size:
             loc_changes.append("font size changed")
-        if spacing != 0:
+        if spacing:
             loc_changes.append("line spacing changed")
-        if margins != 0:
+        if margins:
             loc_changes.append("margins changed")
 
 
     @staticmethod
     def format_document(doc: Document, loc_change):
-        count_color_changes = 0
-        count_font_name_changes = 0
-        count_font_size_changes = 0
-        count_line_spacing_changes = 0
-        count_left_paragraph_indentation = 0
-        count_margins_changes = 0
+        count_color_changes = False
+        count_font_name_changes = False
+        count_font_size_changes = False
+        count_line_spacing_changes = False
+        count_left_paragraph_indentation = False
+        count_margins_changes = False
         for paragraph in doc.paragraphs:
-            count_font_name_changes += MainRequirementsFormatter.change_font('Times New Roman', paragraph)
-            count_font_size_changes += MainRequirementsFormatter.change_font_size(14, paragraph)
-            count_color_changes += MainRequirementsFormatter.change_font_color(RGBColor(0, 0, 0), paragraph)
-            count_line_spacing_changes += MainRequirementsFormatter.change_line_spacing(WD_LINE_SPACING.ONE_POINT_FIVE, paragraph)
-            count_left_paragraph_indentation += MainRequirementsFormatter.change_left_paragraph_indentation(1.25, paragraph)
+            count_font_name_changes = MainRequirementsFormatter.change_font('Times New Roman', paragraph)
+            count_font_size_changes = MainRequirementsFormatter.change_font_size(14, paragraph)
+            count_color_changes = MainRequirementsFormatter.change_font_color(RGBColor(0, 0, 0), paragraph)
+            count_line_spacing_changes = MainRequirementsFormatter.change_line_spacing(WD_LINE_SPACING.ONE_POINT_FIVE, paragraph)
+            count_left_paragraph_indentation = MainRequirementsFormatter.change_left_paragraph_indentation(1.25, paragraph)
         MainRequirementsFormatter.number_pages(doc)
-        count_margins_changes += MainRequirementsFormatter.change_margins(3, 1.5, 2,2,doc)
+        count_margins_changes = MainRequirementsFormatter.change_margins(3, 1.5, 2,2,doc)
         MainRequirementsFormatter.external_changes(count_color_changes, count_left_paragraph_indentation,count_font_name_changes,count_font_size_changes,count_line_spacing_changes,count_margins_changes, loc_change)

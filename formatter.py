@@ -23,7 +23,8 @@ def main():
 
     changes =[]
     MainRequirementsFormatter.format_document(doc, changes)
-    MainRequirementsFormatter.change_title_page_year(doc, '2023', changes)
+    SourceLinksFormatter.extract_bibliography(doc, 'библиография.txt')
+    MainRequirementsFormatter.change_title_page_year(doc, '2024', changes)
     SourceLinksFormatter.check_for_links_presence(doc, changes)
 
     doc.save("edited.docx")
