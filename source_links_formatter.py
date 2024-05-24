@@ -35,24 +35,31 @@ class SourceLinksFormatter:
 
         return counter
 
-    def extract_bibliography(doc: Document, output_txt_file)-> int:
+    def extract_bibliography(doc: Document):
         bibliography_found = False
         bibliography_text = []
+        changes = False
 
         for paragraph in doc.paragraphs:
             if bibliography_found:
+                if paragraph.text.strip() == "":
+                    break
                 bibliography_text.append(paragraph.text)
             if "Библиографический список:" in paragraph.text:
                 bibliography_found = True
-
-        with open(output_txt_file, 'w', encoding='utf-8') as file:
-            file.write('\n'.join(bibliography_text))
+        for i, paragraph in enumerate(doc.paragraphs):
+            if paragraph.text in bibliography_text:
+                #берём paragraph.text, передаём в скрипт, возвращаем изменённое
+                #добавить if paragraph.text != изменённое, то изменяем файл(строка ниже doc.par...) и меняем changes на True
+                #в самом конце функции, если changes==True то возвращаем тру и коммент ниже
+                print(paragraph.text)
+                doc.paragraphs[i].text = "read"
 
     @staticmethod
     def check_for_links_presence(doc: Document, changes):
         ref_subscripts_number = SourceLinksFormatter.get_number_of_ref_subscripts(doc)
         source_links_number = SourceLinksFormatter.get_number_of_source_links(doc, 'Библиографический список:')
-        print(ref_subscripts_number)
-        print(source_links_number)
         if ref_subscripts_number != source_links_number:
             changes.append("warning: the number of highlighted references does not correspond to the number of literature sources, perhaps your list of sources is not a complete list!")
+        #тут if (extract_bibliography) то changes.append("отредактированы ссылки в списке библиографии")
+        #если чуть больше заморочиться, то можно и уточнять какая ссылка, но мне кажется и этого достаточно

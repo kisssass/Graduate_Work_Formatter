@@ -143,7 +143,6 @@ class MainRequirementsFormatter:
         count_font_size_changes = False
         count_line_spacing_changes = False
         count_left_paragraph_indentation = False
-        count_margins_changes = False
         for paragraph in doc.paragraphs:
             count_font_name_changes = MainRequirementsFormatter.change_font('Times New Roman', paragraph)
             count_font_size_changes = MainRequirementsFormatter.change_font_size(14, paragraph)
